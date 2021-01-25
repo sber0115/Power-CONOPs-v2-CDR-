@@ -20,3 +20,10 @@ ylim([0,100]);
 xlabel('Time (hrs)')
 ylabel('State of Charge (100% Max)')
 
+occlusionText = ['Occlusion power: ' num2str(occlusion_mode) 'W'];
+text(1.5, 30, occlusionText)
+
+efficiencyText = ['Efficiency through occlusion: ' num2str(0.75)];
+text(1.5, 40, efficiencyText)
+%annotation('textbox',[.9 .5 .1 .2],'String',{'Occlusion power: ', num2str(occlusion_mode)},'EdgeColor','none')
+

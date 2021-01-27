@@ -1,7 +1,9 @@
 
 
 init_soc = .8;             %initial state of charge
-trek_duration     =  28.5; %[Hrs]
+occlusion_power = 30;
+%efficiency_multiplier = .60;
+trek_duration     =  50; %[Hrs]
 
 plan_duration     =  0;    %[Hrs]
 downlink_duration =  0;  %[Hrs, 1hr and 20mins]

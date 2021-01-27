@@ -5,6 +5,7 @@ time_scale = 60^2;
 time_start = 0;
 time_step  = 1;  
 time_end   = trek_duration*time_scale; %[Hrs]*[36000 sec/Hr] = sec
+occlusion_positive_power_time = 92136;
 tolerance  = 1e-2; %used to check if battery state of charge exceeds 100%
 
 time_vector = time_start: time_step: time_end;
@@ -13,7 +14,7 @@ tv_length = length(time_vector);
 
 %% Occlusion power multipliers
 occ_index = 1;
-occ_times       = [7087, 14175, 21262, 28349, 35437, 42524, 49611, ...
+occ_times       = [7087, 14175, 21262, 28349, 35437 - 28349, 42524, 49611, ...
                     56699, 63786, 70873, 77961, 85048, 92135];
 
 %100 percent interpolation (site 1)
@@ -29,7 +30,7 @@ charge_min_mode = 9;
 charge_max_mode = 25;
 max_solar_flux = 75;
 
-occlusion_mode = 35;
+occlusion_mode = occlusion_power;
 
 %% IGNORE EVERYTHING BELOW FOR NOW
 plan_trek_interval = [0: time_step: plan_duration*time_scale];
@@ -43,6 +44,13 @@ battery_soc        = zeros(1,tv_length);
 battery_cap        = zeros(1,tv_length);
 %%
 distance_travelled = zeros(1,tv_length);
+efficiency_multipliers = zeros(1,tv_length);
+efficiency_multipliers(1:5000) = linspace(75,65,5000)./100;
+efficiency_multipliers(5001:30000) = linspace(65,70,25000)./100;
+efficiency_multipliers(30001:65000) = linspace(70,60,35000)./100;
+efficiency_multipliers(65001:92136) = linspace(60,70,27136)./100;
+efficiency_multipliers(92137:tv_length) = ones(1,tv_length-92136)./100;
+
 azimuth_angle      = zeros(1, tv_length); %in degrees
 
 %populating azimuth_angle first since

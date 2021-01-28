@@ -77,12 +77,10 @@ for i = length(trek_phase1)+1:length(time_vector)
     if (spec_time < 92136)
         energy_change = (max_solar_flux*power_multiplier*efficiency_multipliers(i) - occlusion_mode);
         %{
-        if (spec_time >= 35000 && spec_time <= 75000)
-            energy_change = (max_solar_flux*power_multiplier*efficiency_multiplier ...
-                            - occlusion_mode);
-        end
+        if (spec_time >= 40000 && spec_time <= 80000)
+            energy_change = -1 * occlusion_mode;
+        end 
         %}
-        
         distance_travelled(i) = distance_travelled(i-1);
         
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ROCK AVOIDANCE
@@ -121,10 +119,11 @@ for i = length(trek_phase1)+1:length(time_vector)
             
             if (in_shadow)
                 time_in_shadow = time_in_shadow + 1;
-                power_generated = 0;
+                power_generated = (extreme_rove_mode*power_multiplier)*0.5;
             elseif (time_in_shadow >= max_shadow_time)
                 time_in_shadow = 0;
                 in_shadow = false;
+                power_generated = (extreme_rove_mode*power_multiplier); 
             else
                 power_generated = (extreme_rove_mode*power_multiplier);  
             end
@@ -165,10 +164,11 @@ for i = length(trek_phase1)+1:length(time_vector)
  
             if (in_shadow)
                 time_in_shadow = time_in_shadow + 1;
-                power_generated = 0;
+                power_generated = (extreme_rove_mode*power_multiplier)*0.5;
             elseif (time_in_shadow >= max_shadow_time)
                 time_in_shadow = 0;
                 in_shadow = false;
+                power_generated = (extreme_rove_mode*power_multiplier);
             else
                 power_generated = (extreme_rove_mode*power_multiplier);     
             end

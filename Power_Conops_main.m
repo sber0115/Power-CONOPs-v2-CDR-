@@ -2,19 +2,23 @@
 %  Crater and rock characteristics determined by the Rock and
 %  CraterDistribution files
 if (enable_rocks)
-    rock_findings = randi([occlusion_positive_power_time, length(time_vector)], 1, length(rockAvoidances)*2);
+    rock_findings = randi([occlusion_end_time, length(time_vector)], 1, length(rockAvoidances)*2);
+    all_avoided_rocks = zeros(length(rockAvoidances));
 else
     rock_findings = [];
+    all_avoided_rocks = [];
 end
 
 if (enable_shadows)
-    shadow_findings = randi([occlusion_positive_power_time, length(time_vector)], 1, 10);
+    shadow_findings = randi([occlusion_end_time, length(time_vector)], 1, 10);
 else
     shadow_findings = [];
 end
 
 if (enable_craters)
-    crater_findings = randi([occlusion_positive_power_time, length(time_vector)], 1, length(craterAvoidances)*2);
+    crater_findings = randi([occlusion_end_time, length(time_vector)], 1, length(craterAvoidances)*2);
+    all_avoided_craters = zeros(length(craterAvoidances));
+    all_avoided_craters = [];
 else
     crater_findings = [];
 end
@@ -180,7 +184,7 @@ for i = length(trek_phase1)+1:length(time_vector)
         end
     else
         
-        energy_change = (max_solar_flux*power_multiplier - nominal_rove_mode);
+        energy_change = (max_solar_flux*angle_offset(i) - nominal_rove_mode);
         if (shadow_found) %may encounter shadow
             in_shadow = true;
             energy_change = (-1 * nominal_rove_mode);

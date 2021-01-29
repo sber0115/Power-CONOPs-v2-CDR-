@@ -48,5 +48,8 @@ totalTurnEnergies = skidTurnEnergies+2*pointTurnEnergy; %W*s
 straightPathDistances = 2*turnRadii; %[m]
 
 rockAvoidances = [totalTurnEnergies ; straightPathDistances; totalTurnTimes];
+rock_cols = size(rockAvoidances,2);
+rock_perm = randperm(rock_cols);
+rockAvoidances = rockAvoidances(:, rock_perm);
 
 x = sum(rocks(2,1:end));

@@ -5,7 +5,7 @@ time_scale = 60^2;
 time_start = 0;
 time_step  = 1;  
 time_end   = trek_duration*time_scale; %[Hrs]*[36000 sec/Hr] = sec
-occlusion_positive_power_time = 92136;
+occlusion_end_time = 92136;
 tolerance  = 1e-2; %used to check if battery state of charge exceeds 100%
 
 time_vector = time_start: time_step: time_end;
@@ -45,17 +45,18 @@ battery_cap        = zeros(1,tv_length);
 %%
 distance_travelled = zeros(1,tv_length);
 efficiency_multipliers = zeros(1,tv_length);
-efficiency_multipliers(1:5000) = linspace(75,65,5000)./100;
-efficiency_multipliers(5001:30000) = linspace(65,70,25000)./100;
-efficiency_multipliers(30001:65000) = linspace(70,60,35000)./100;
-efficiency_multipliers(65001:92136) = linspace(60,70,27136)./100;
-efficiency_multipliers(92137:tv_length) = ones(1,tv_length-92136)./100;
+
+efficiency_multipliers(1:35000) = linspace(75,65,35000)./100;
+efficiency_multipliers(35001:45000) = linspace(65,68,10000)./100;
+efficiency_multipliers(45001:65000) = linspace(68,65,20000)./100;
+efficiency_multipliers(65001:92136) = linspace(65,70,27136)./100;
+
 
 azimuth_angle      = zeros(1, tv_length); %in degrees
 
 %populating azimuth_angle first since
 %the load_in is dependent on angle
-for i = 1:length(time_vector)
+for i = occlusion_end_time:length(time_vector)
      if (i > 1)
         prev_value = azimuth_angle(i-1);
         divide_factor = time_step*time_scale;

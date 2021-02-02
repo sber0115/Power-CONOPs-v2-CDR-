@@ -62,7 +62,7 @@ totalTurnTimes = round(skidTurnTimes+2*pointTurnTime); %[s]
 totalTurnEnergies = skidTurnEnergies+2*poinTurnEnergy; %W*s
 straightPathDistances = 2*sin(thetas).*turnRadii;
 
-craterAvoidances = [totalTurnEnergies ; straightPathDistances; totalTurnTimes];
+craterAvoidances = [totalTurnEnergies ; straightPathDistances; totalTurnTimes; D];
 crater_cols = size(craterAvoidances,2);
 crater_perm = randperm(crater_cols);
 craterAvoidances = craterAvoidances(:, crater_perm);

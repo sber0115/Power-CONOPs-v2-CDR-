@@ -22,12 +22,12 @@ occ_multipliers_site1 = [1, 0.93, 0.8, 0.69, 0.57, 0.51, ...
                     0.45, 0.26, 0.21, 0.24, 0.47, 0.74, 0.98, 1];
 
 %% Power consumption and generation for different modes
-rove_downlink_mode = 57;
-charge_downlink_mode = 57;
-nominal_rove_mode = 52; 
-extreme_rove_mode = 57;
-charge_min_mode = 9;
-charge_max_mode = 25;
+rove_downlink_mode = 53;
+charge_downlink_mode = 38;
+nominal_rove_mode = 48; 
+extreme_rove_mode = 53;
+charge_min_mode = 31;
+%charge_max_mode = 25;
 max_solar_flux = 75;
 
 occlusion_mode = occlusion_power;
@@ -37,7 +37,7 @@ plan_trek_interval = [0: time_step: plan_duration*time_scale];
 downlink_interval  = [plan_duration: time_step: downlink_duration*time_scale];
 trek_phase1        = [plan_trek_interval, downlink_interval];                                                       
 battery_total = 200*3600; %maximum battery energy capacity in W/hrs
-velocity_cm  = 2.5; %speed made good in cm/s
+velocity_cm  = 4;
 velocity_m = velocity_cm/100;
 distance_covered = velocity_m;
 battery_soc        = zeros(1,tv_length);
@@ -46,10 +46,11 @@ battery_cap        = zeros(1,tv_length);
 distance_travelled = zeros(1,tv_length);
 efficiency_multipliers = zeros(1,tv_length);
 
-efficiency_multipliers(1:35000) = linspace(75,65,35000)./100;
-efficiency_multipliers(35001:45000) = linspace(65,68,10000)./100;
-efficiency_multipliers(45001:65000) = linspace(68,65,20000)./100;
-efficiency_multipliers(65001:92136) = linspace(65,70,27136)./100;
+efficiency_multipliers(1:35000) = linspace(200-85,200-80,35000)./100;
+efficiency_multipliers(35001:45000) = linspace(200-80,200-82,10000)./100;
+efficiency_multipliers(45001:65000) = linspace(200-82,200-80,20000)./100;
+efficiency_multipliers(65001:92136) = linspace(200-80,200-83,27136)./100;
+efficiency_multipliers(92137:tv_length) = linspace(200-83,200-90,tv_length-92136)./100;
 
 
 azimuth_angle      = zeros(1, tv_length); %in degrees

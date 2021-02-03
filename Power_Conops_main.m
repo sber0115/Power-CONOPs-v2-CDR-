@@ -10,7 +10,7 @@ else
 end
 
 if (enable_shadows)
-    shadow_findings = randi([occlusion_end_time, length(time_vector)], 1, 100);
+    shadow_findings = randi([occlusion_end_time, length(time_vector)], 1, 50);
 else
     shadow_findings = [];
 end
@@ -45,6 +45,9 @@ change_power_multiplier = false;
 time_avoiding_rock = 0; %[secs]
 time_avoiding_crater = 0; %[secs]
 time_in_shadow = 0; %[secs]
+distance_covered = 0;
+direction_change_time = 0;
+backAtLander_time = 0;
 
 %{
 Factor by which the distance travelled toward target decreases 
@@ -69,6 +72,11 @@ for i = length(trek_phase1)+1:length(time_vector)
        occ_index = occ_index + 1; 
     end
     
+    if (distance_travelled(i-1) >= 500 && ~is_avoiding_rock & ~is_avoiding_crater)
+       changed_direction = true; 
+       direction_change_time = spec_time;
+    end
+    
     power_multiplier = occ_multipliers_site1(occ_index); %site 1
     %power_fraction is the factor by which max_solar_flux is multiplied (< 1)
  
@@ -80,8 +88,7 @@ for i = length(trek_phase1)+1:length(time_vector)
     
     if (spec_time < 92136)
         energy_change = (max_solar_flux*power_multiplier - occlusion_mode*efficiency_multipliers(i));
-        
-        distance_travelled(i) = distance_travelled(i-1);
+        distance_covered = 0;
         
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%ROCK AVOIDANCE
     elseif (rock_found && can_avoid_rock)    
@@ -103,9 +110,10 @@ for i = length(trek_phase1)+1:length(time_vector)
         avoidance_consumption = rock_turn_energy / rock_avoidance_duration;
         power_generated = (max_solar_flux*angle_offset(i))*0.6;         
         energy_change = power_generated + -1 *(avoidance_consumption + avionics_consumption);    
-   
-        distance_travelled(i) = distance_travelled(i-1)+(distance_covered*linear_distance_factor);
+     
         rock_find_index = rock_find_index + 1;
+        
+        distance_covered = normal_distance*linear_distance_factor;
    
     elseif (is_avoiding_rock)
         if (time_avoiding_rock == rock_avoidance_duration-1)
@@ -113,7 +121,7 @@ for i = length(trek_phase1)+1:length(time_vector)
             time_avoiding_rock = 0;
             energy_change = max_solar_flux*angle_offset(i) - nominal_rove_mode;
     
-            distance_travelled(i) = distance_travelled(i-1)+distance_covered;
+            distance_covered = normal_distance;
             
         else %still avoiding rock
             time_avoiding_rock = time_avoiding_rock + 1;
@@ -130,7 +138,7 @@ for i = length(trek_phase1)+1:length(time_vector)
              
             energy_change = power_generated + -1 *(avoidance_consumption + avionics_consumption); 
      
-            distance_travelled(i) = distance_travelled(i-1)+(distance_covered*linear_distance_factor);
+            distance_covered = (normal_distance*linear_distance_factor);
         end
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%CRATER AVOIDANCE
@@ -150,7 +158,7 @@ for i = length(trek_phase1)+1:length(time_vector)
         power_generated = (max_solar_flux*angle_offset(i))*0.6;    
         energy_change = power_generated + -1 *(avoidance_consumption + avionics_consumption); 
   
-        distance_travelled(i) = distance_travelled(i-1)+(distance_covered*linear_distance_factor);
+        distance_covered = (normal_distance*linear_distance_factor);
         crater_find_index = crater_find_index + 1;
         
     elseif (is_avoiding_crater)
@@ -160,7 +168,7 @@ for i = length(trek_phase1)+1:length(time_vector)
             %finished avoiding crater so back to nominal rove
             energy_changed = max_solar_flux*angle_offset(i) - nominal_rove_mode;
      
-            distance_travelled(i) = distance_travelled(i-1)+distance_covered;
+            distance_covered = normal_distance;
             
         else %still avoiding crater
             time_avoiding_crater = time_avoiding_crater + 1;
@@ -179,7 +187,7 @@ for i = length(trek_phase1)+1:length(time_vector)
              
             energy_change = power_generated + -1 *(avoidance_consumption + avionics_consumption); 
      
-            distance_travelled(i) = distance_travelled(i-1)+(distance_covered*linear_distance_factor);
+            distance_covered = (normal_distance*linear_distance_factor);
         
         end
     else
@@ -197,7 +205,8 @@ for i = length(trek_phase1)+1:length(time_vector)
             time_in_shadow = 0;
         end
         
-        distance_travelled(i) = distance_travelled(i-1)+distance_covered;
+        distance_covered = normal_distance;
+        
     end
     
     temp_cap = (battery_cap(i-1) + energy_change);
@@ -209,5 +218,19 @@ for i = length(trek_phase1)+1:length(time_vector)
     else
         battery_cap(i) = battery_cap(i-1);
     end
+    
     battery_soc(i) = battery_cap(i)/battery_total;
+    
+    if (changed_direction)
+        if (distance_travelled(i-1) <= 0)
+           backAtLander_time = spec_time; 
+           break;
+        else
+            distance_covered = -1*distance_covered;
+        end
+    else
+        distance_covered = distance_covered;
+    end
+    
+    distance_travelled(i) = distance_travelled(i-1) + distance_covered;
 end

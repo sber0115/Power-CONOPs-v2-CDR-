@@ -9,7 +9,7 @@ downlink_duration =  0;  %[Hrs, 1hr and 20mins]
 
 %% User can see how energy expenditure changes by disabling/enabling rocks/craters
 enable_rocks = true;
-enable_shadows = false;
+enable_shadows = true;
 enable_craters = true;
 
 max_soc = 1;           %maximum state of charge [100%]

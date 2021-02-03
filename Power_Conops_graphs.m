@@ -3,12 +3,13 @@ figure
 plot(time_vector/time_scale,distance_travelled, 'color', 'k')
 xline(25.59, '--r', {'Occlusion end'});
 %xline(rover_reached_40, '--m', {'Rover reached 40%'});
-title('Net Distance vs Time')
+title('Distance from Lander vs Time')
 xlabel('Time (hrs)')
-xlim([19, trek_duration])
+xlim([19, backAtLander_time/60^2])
+ylim([0, 550])
 %xticks(linspace(0,trek_duration, 10))
 xtickformat('%.1f')
-ylabel('Distance (m)')
+ylabel('Distance from Lander (m)')
 
 figure
 plot(time_vector/time_scale,battery_soc*100, 'color', 'k')
@@ -23,7 +24,7 @@ line_occlusion_end.LabelVerticalAlignment = 'middle';
 hold on
 title('Battery State-of-Charge vs Time')
 %xlim([0, 25.6])
-xlim([0, trek_duration])
+xlim([0, backAtLander_time/60^2])
 %xticks(linspace(0,trek_duration, 10))
 xtickformat('%.1f')
 ylim([0,100]);
@@ -34,19 +35,17 @@ ylabel('State of Charge (100% Max)')
 occlusionText = [{'Nominal power' 'throughout' 'occlusion: ' [num2str(occlusion_mode) 'W']} ];
 text(1.5, 30, occlusionText);
 
+
 craterText = [{'Diameter of' 'biggest crater: ' [num2str(max(all_avoided_craters)) 'm']} ];
-text(30, 30, craterText);
+text(backAtLander_time/60^2-20, 30, craterText);
 
 cratersAvoidedText = [{'Number of' 'craters avoided: ' [num2str(crater_find_index)]} ];
-text(37.5, 30, cratersAvoidedText);
+text(backAtLander_time/60^2-10, 30, cratersAvoidedText);
 
 rockText = [{'Diameter of' 'biggest rock: ' [num2str(max(all_avoided_rocks)) 'm']} ];
-text(30, 15, rockText);
+text(backAtLander_time/60^2-20, 15, rockText);
 
 rocksAvoidedText = [{'Number of' 'rocks avoided: ' [num2str(rock_find_index)]} ];
-text(37.5, 15, rocksAvoidedText);
+text(backAtLander_time/60^2-10, 15, rocksAvoidedText);
 
-%efficiencyText = [{'Battery efficiency'} ['through occlusion: ' num2str(efficiency_multiplier) '%']];
-%text(1.5, 40, efficiencyText)
-%annotation('textbox',[.9 .5 .1 .2],'String',{'Occlusion power: ', num2str(occlusion_mode)},'EdgeColor','none')
 

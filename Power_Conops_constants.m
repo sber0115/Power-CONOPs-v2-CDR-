@@ -37,9 +37,9 @@ plan_trek_interval = [0: time_step: plan_duration*time_scale];
 downlink_interval  = [plan_duration: time_step: downlink_duration*time_scale];
 trek_phase1        = [plan_trek_interval, downlink_interval];                                                       
 battery_total = 200*3600; %maximum battery energy capacity in W/hrs
-velocity_cm  = 4;
+velocity_cm  = 4.5;
 velocity_m = velocity_cm/100;
-distance_covered = velocity_m;
+normal_distance = velocity_m;
 battery_soc        = zeros(1,tv_length);
 battery_cap        = zeros(1,tv_length);
 %%

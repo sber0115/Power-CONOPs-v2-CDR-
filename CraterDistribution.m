@@ -3,7 +3,7 @@ maxAllowedDepth = 0.080; %[m]
 maxDiameterSmallCraters = 10*maxAllowedDepth; %small craters D < 4m have depth=0.1*D , [m]
 maxDiameterLargeCraters = 5*maxAllowedDepth; %craters 4m < D < 10m have depth=0.2*D , [m]
 
-Diameters = (8e-5:0.001:0.03); %[km]
+Diameters = (8e-5:0.0001:0.005); %[km]
 B = 10.^(-1.1-2.*log10(Diameters)); %[craters per km^2]
 
 totalFrequency = 10.^(-1.1-2.*log10(8e-5));

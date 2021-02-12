@@ -14,7 +14,7 @@ tv_length = length(time_vector);
 
 %% Occlusion power multipliers
 occ_index = 1;
-occ_times       = [7087, 14175, 21262, 28349, 35437 - 28349, 42524, 49611, ...
+occ_times       = [7087, 14175, 21262, 28349, 35437, 42524, 49611, ...
                     56699, 63786, 70873, 77961, 85048, 92135];
 
 %100 percent interpolation (site 1)
@@ -22,13 +22,13 @@ occ_multipliers_site1 = [1, 0.93, 0.8, 0.69, 0.57, 0.51, ...
                     0.45, 0.26, 0.21, 0.24, 0.47, 0.74, 0.98, 1];
 
 %% Power consumption and generation for different modes
-rove_downlink_mode = 53;
+rove_downlink_mode = 59;
 charge_downlink_mode = 38;
-nominal_rove_mode = 48; 
-extreme_rove_mode = 53;
+nominal_rove_mode = 54; 
+extreme_rove_mode = 59;
 charge_min_mode = 31;
 %charge_max_mode = 25;
-max_solar_flux = 75;
+max_solar_flux = 70;
 
 occlusion_mode = occlusion_power;
 
@@ -36,24 +36,24 @@ occlusion_mode = occlusion_power;
 plan_trek_interval = [0: time_step: plan_duration*time_scale];
 downlink_interval  = [plan_duration: time_step: downlink_duration*time_scale];
 trek_phase1        = [plan_trek_interval, downlink_interval];                                                       
-battery_total = 200*3600; %maximum battery energy capacity in W/hrs
-velocity_cm  = 4.5;
+battery_total = 100*3600; %maximum battery energy capacity in W/hrs
+velocity_cm  = 4;
 velocity_m = velocity_cm/100;
 normal_distance = velocity_m;
-battery_soc        = zeros(1,tv_length);
-battery_cap        = zeros(1,tv_length);
+battery_soc     = zeros(1,tv_length);
+battery_cap     = zeros(1,tv_length);
 %%
 distance_travelled = zeros(1,tv_length);
 efficiency_multipliers = zeros(1,tv_length);
 
-efficiency_multipliers(1:35000) = linspace(200-85,200-80,35000)./100;
-efficiency_multipliers(35001:45000) = linspace(200-80,200-82,10000)./100;
-efficiency_multipliers(45001:65000) = linspace(200-82,200-80,20000)./100;
-efficiency_multipliers(65001:92136) = linspace(200-80,200-83,27136)./100;
-efficiency_multipliers(92137:tv_length) = linspace(200-83,200-90,tv_length-92136)./100;
+efficiency_multipliers(1:35000) = linspace(200-73,200-69,35000)./100;
+efficiency_multipliers(35001:45000) = linspace(200-69,200-71,10000)./100;
+efficiency_multipliers(45001:65000) = linspace(200-71,200-69,20000)./100;
+efficiency_multipliers(65001:92136) = linspace(200-69,200-72,27136)./100;
+efficiency_multipliers(92137:tv_length) = linspace(200-72,200-80,tv_length-92136)./100;
 
 
-azimuth_angle      = zeros(1, tv_length); %in degrees
+azimuth_angle = zeros(1, tv_length); %in degrees
 
 %populating azimuth_angle first since
 %the load_in is dependent on angle

@@ -17,18 +17,17 @@ occ_index = 1;
 occ_times       = [7087, 14175, 21262, 28349, 35437, 42524, 49611, ...
                     56699, 63786, 70873, 77961, 85048, 92135];
 
-%100 percent interpolation (site 1)
 occ_multipliers_site1 = [1, 0.93, 0.8, 0.69, 0.57, 0.51, ...
                     0.45, 0.26, 0.21, 0.24, 0.47, 0.74, 0.98, 1];
 
 %% Power consumption and generation for different modes
-rove_downlink_mode = 59;
-charge_downlink_mode = 38;
-nominal_rove_mode = 54; 
-extreme_rove_mode = 59;
-charge_min_mode = 31;
+rove_downlink_mode = 58;
+charge_downlink_mode = 39;
+nominal_rove_mode = 53; 
+extreme_rove_mode = 58;
+charge_min_mode = 32;
 %charge_max_mode = 25;
-max_solar_flux = 70;
+max_solar_flux = 67;
 
 occlusion_mode = occlusion_power;
 

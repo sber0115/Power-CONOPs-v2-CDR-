@@ -1,7 +1,7 @@
 
 
 init_soc = 0.8;             %initial state of charge
-occlusion_power = 25;
+occlusion_power = 20;
 trek_duration     =  50; %[Hrs]
 
 plan_duration     =  0;    %[Hrs]

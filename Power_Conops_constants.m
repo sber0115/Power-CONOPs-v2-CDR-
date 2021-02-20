@@ -21,21 +21,18 @@ occ_multipliers_site1 = [1, 0.93, 0.8, 0.69, 0.57, 0.51, ...
                     0.45, 0.26, 0.21, 0.24, 0.47, 0.74, 0.98, 1];
 
 %% Power consumption and generation for different modes
+extreme_rove_mode = 58;
+nominal_rove_mode = 53; 
 rove_downlink_mode = 58;
 charge_downlink_mode = 39;
-nominal_rove_mode = 53; 
-extreme_rove_mode = 58;
-charge_min_mode = 32;
-%charge_max_mode = 25;
-max_solar_flux = 67;
+charge_min_mode = 8;
+charge_max_mode = 25;
 
-occlusion_mode = occlusion_power;
-
-%% IGNORE EVERYTHING BELOW FOR NOW
+%%
 plan_trek_interval = [0: time_step: plan_duration*time_scale];
 downlink_interval  = [plan_duration: time_step: downlink_duration*time_scale];
 trek_phase1        = [plan_trek_interval, downlink_interval];                                                       
-battery_total = 100*3600; %maximum battery energy capacity in W/hrs
+battery_total = 200*3600; %maximum battery energy capacity in W/hrs
 velocity_cm  = 4;
 velocity_m = velocity_cm/100;
 normal_distance = velocity_m;
@@ -116,7 +113,7 @@ for i = 1:length(trek_phase1)
     curr_net_power = curr_load_in - curr_load_out;
 
     if (i > 1)
-        energy_change = curr_net_power / 3600; %[W, or J/s, * 1Wh/3600J = Wh/s
+        energy_change = curr_net_power / 3600; 
         battery_cap(i) = battery_cap(i-1) + energy_change;
         battery_soc(i) = battery_cap(i)/battery_total;    
     else

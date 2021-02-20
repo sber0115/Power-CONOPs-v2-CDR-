@@ -1,7 +1,13 @@
 
 
 init_soc = 0.8;             %initial state of charge
-occlusion_power = 20;
+start_charge_soc = 0.85;
+end_charge_soc = .95;
+
+occlusion_power_consumption = 20;
+occlusion_power_generation = 80;
+roving_power_generation = 67;
+
 trek_duration     =  50; %[Hrs]
 
 plan_duration     =  0;    %[Hrs]

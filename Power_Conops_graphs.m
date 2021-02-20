@@ -1,11 +1,8 @@
-figure 
-plot(time_vector/time_scale,azimuth_angle)
 
 
 figure
 plot(time_vector/time_scale,distance_travelled)
 %xline(25.59, '--r', {'Occlusion end'});
-%xline(rover_reached_40, '--m', {'Rover reached 40%'});
 %title('Distance from Lander vs Time')
 xlabel('Time (hrs)')
 xlim([25.59, backAtLander_time/60^2])
@@ -13,15 +10,15 @@ ylim([0, 550])
 %xticks(linspace(0,trek_duration, 10))
 xtickformat('%.1f')
 ylabel('Distance from Lander (m)')
+totalTrekTime_text = [{'Speed-made-good: ' [num2str(round(100000/(backAtLander_time - occlusion_end_time), 2)) ' cm/s']} ];
+text(backAtLander_time/60^2 - 3.5, 490, totalTrekTime_text);
+totalTrekTime_text = [{'Total time for trek: ' [num2str(round((backAtLander_time/60^2 - occlusion_end_time/60^2), 1)) ' hours']} ];
+text(backAtLander_time/60^2 - 3.5, 425, totalTrekTime_text);
 
 figure
 plot(time_vector/time_scale,battery_soc*100)
-%line_30W = xline(7.87, '--r', {'Transition to nominal 20W total'});
 line_30W.LabelVerticalAlignment = 'middle';
-%line_pos_power = xline(21.65, '--r', {'Can rove with positive net power again'});
 line_pos_power.LabelVerticalAlignment = 'middle';
-%line([21.65, 24.1], [50,50], 'Color', 'blue', 'LineStyle', '--');
-%xline(24.1, '--b', {'Reaches 80% charge'});
 %line_occlusion_end = xline(25.59, '--r', {'Occlusion end'});
 line_occlusion_end.LabelVerticalAlignment = 'middle';
 hold on
@@ -34,8 +31,10 @@ ylim([0,100]);
 xlabel('Time (hrs)')
 ylabel('State of Charge (100% Max)')
 
+startSOC_text = ['Charge once state-of-charge reaches ' num2str(start_charge_soc*100) ' %'];
+text(27, 40, startSOC_text);
 
-occlusionText = [{'Nominal power' 'throughout' 'occlusion: ' [num2str(occlusion_mode) 'W']} ];
+occlusionText = [{'Nominal power' 'throughout' 'occlusion: ' [num2str(occlusion_power_consumption) 'W']} ];
 text(1.5, 30, occlusionText);
 
 %{

@@ -85,8 +85,13 @@ for i = length(trek_phase1)+1:length(time_vector)
     %similarly for craters
     can_avoid_crater = ~is_charging && ~is_avoiding_crater && ~is_avoiding_rock ...
                        && crater_find_index <= length(craterAvoidances);
+                   
     
-    if (spec_time < 92136)
+    if (spec_time < 21262)
+        energy_change = (occlusion_power_generation*power_multiplier - charge_max_mode*efficiency_multipliers(i));
+        distance_covered = 0;
+        
+    elseif (spec_time < 92136)
         energy_change = (occlusion_power_generation*power_multiplier - occlusion_power_consumption*efficiency_multipliers(i));
         distance_covered = 0;
         

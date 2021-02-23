@@ -41,12 +41,13 @@ battery_cap     = zeros(1,tv_length);
 %%
 distance_travelled = zeros(1,tv_length);
 efficiency_multipliers = zeros(1,tv_length);
+ones_offset = ones(1,tv_length);
 
-efficiency_multipliers(1:35000) = linspace(200-73,200-69,35000)./100;
-efficiency_multipliers(35001:45000) = linspace(200-69,200-71,10000)./100;
-efficiency_multipliers(45001:65000) = linspace(200-71,200-69,20000)./100;
-efficiency_multipliers(65001:92136) = linspace(200-69,200-72,27136)./100;
-efficiency_multipliers(92137:tv_length) = linspace(200-72,200-80,tv_length-92136)./100;
+efficiency_multipliers(1:35000) = linspace(50,60,35000)./100 + 1;
+efficiency_multipliers(35001:45000) = linspace(60,55,10000)./100 + 1;
+efficiency_multipliers(45001:65000) = linspace(55,60,20000)./100 + 1;
+efficiency_multipliers(65001:92136) = linspace(60,55,27136)./100 + 1;
+efficiency_multipliers(92137:tv_length) = 1.3;
 
 
 azimuth_angle = zeros(1, tv_length); %in degrees
@@ -64,13 +65,13 @@ for i = occlusion_end_time:length(time_vector)
 end
 
 sun_vectors = zeros(length(azimuth_angle), 3);
-elevation_angle = 5; %fixed elevation angle of 5 degrees
+elevation_angle = 15; %fixed elevation angle of 15 degrees
 
 for i = 1: tv_length
     sun_vectors(i,:) = sph2cart(deg2rad(azimuth_angle(i)),deg2rad(elevation_angle),1);
 end
 
-panel_normal_vector = [0,1,0];
+panel_normal_vector = [1,0,0];
 angle_offset = zeros(1, tv_length);
 
 for i = 1: tv_length

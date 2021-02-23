@@ -23,15 +23,16 @@ line_pos_power.LabelVerticalAlignment = 'middle';
 line_occlusion_end.LabelVerticalAlignment = 'middle';
 hold on
 %title('Battery State-of-Charge vs Time')
-%xlim([0, 25.6])
-xlim([25.59, backAtLander_time/60^2])
+xlim([0, 25.6])
+%xlim([0, backAtLander_time/60^2])
+%xlim([25.59, backAtLander_time/60^2])
 %xticks(linspace(0,trek_duration, 10))
 xtickformat('%.1f')
 ylim([0,100]);
 xlabel('Time (hrs)')
 ylabel('State of Charge (100% Max)')
 
-startSOC_text = ['Charge once state-of-charge reaches ' num2str(start_charge_soc*100) ' %'];
+startSOC_text = ['Charge once state-of-charge reaches ' num2str(start_charge_soc*100) '%'];
 text(27, 40, startSOC_text);
 
 occlusionText = [{'Nominal power' 'throughout' 'occlusion: ' [num2str(occlusion_power_consumption) 'W']} ];

@@ -41,6 +41,9 @@ in_shadow    = false;
 changed_direction = false;
 
 change_power_multiplier = false;
+change_max_power = false;
+occ_index = 1;
+occ_max_power_index = 1;
 
 time_avoiding_rock = 0; %[secs]
 time_avoiding_crater = 0; %[secs]
@@ -67,9 +70,14 @@ for i = length(trek_phase1)+1:length(time_vector)
     shadow_found = ismember(spec_time, shadow_findings);
     crater_found = ismember(spec_time, crater_findings);
     change_power_multiplier = ismember(spec_time, occ_times);
+    change_max_power = ismember(spec_time, occ_times_max_power);
     
     if (change_power_multiplier && occ_index < length(occ_times))
        occ_index = occ_index + 1; 
+    end
+    
+    if (change_max_power && occ_max_power_index < length(occ_times_max_power))
+       occ_max_power_index = occ_max_power_index + 1; 
     end
     
     if (distance_travelled(i-1) >= 500 && ~is_avoiding_rock && ~is_avoiding_crater)
@@ -77,7 +85,8 @@ for i = length(trek_phase1)+1:length(time_vector)
        direction_change_time = spec_time;
     end
     
-    power_multiplier = occ_multipliers_site1(occ_index); %site 1
+    power_multiplier = occ_multipliers_site1(occ_index);
+    occlusion_power_generation = occlusion_powers(occ_max_power_index)*power_multiplier;
     %power_fraction is the factor by which max_solar_flux is multiplied (< 1)
  
     can_avoid_rock = ~is_charging && ~is_avoiding_rock && ~is_avoiding_crater ...
@@ -88,25 +97,25 @@ for i = length(trek_phase1)+1:length(time_vector)
                    
     
     if (spec_time < 21262)
-        energy_change = (occlusion_power_generation*power_multiplier - charge_max_mode*efficiency_multipliers(i));
+        energy_change = (occlusion_power_generation - charge_max_mode*battery_efficiency_multipliers(i));
         distance_covered = 0;
         
     elseif (spec_time < 92136)
-        energy_change = (occlusion_power_generation*power_multiplier - occlusion_power_consumption*efficiency_multipliers(i));
+        energy_change = (occlusion_power_generation - occlusion_power_consumption*battery_efficiency_multipliers(i));
         distance_covered = 0;
         
     elseif (battery_soc(i-1) < start_charge_soc && ~is_charging)
         is_charging = true;
-        energy_change = (roving_power_generation*angle_offset(i) - charge_min_mode*efficiency_multipliers(i));
+        energy_change = (roving_power_generation*angle_offset(i) - charge_min_mode*battery_efficiency_multipliers(i));
         distance_covered = 0;
     
     elseif (is_charging)
         if (battery_soc(i-1) >= end_charge_soc)
             is_charging = false;
-            energy_change = (roving_power_generation*angle_offset(i) - nominal_rove_mode*efficiency_multipliers(i));
+            energy_change = (roving_power_generation*angle_offset(i) - nominal_rove_mode*battery_efficiency_multipliers(i));
             distance_covered = normal_distance;
         else
-            energy_change = (roving_power_generation*angle_offset(i) - charge_min_mode*efficiency_multipliers(i));
+            energy_change = (roving_power_generation*angle_offset(i) - charge_min_mode*battery_efficiency_multipliers(i));
             distance_covered = 0;
         end
         
@@ -212,7 +221,7 @@ for i = length(trek_phase1)+1:length(time_vector)
         end
     else
         
-        energy_change = (roving_power_generation*angle_offset(i) - nominal_rove_mode*efficiency_multipliers(i));
+        energy_change = (roving_power_generation*angle_offset(i) - nominal_rove_mode*battery_efficiency_multipliers(i));
         if (shadow_found) %may encounter shadow
             in_shadow = true;
             energy_change = (-1 * nominal_rove_mode);

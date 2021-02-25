@@ -16,6 +16,15 @@ tv_length = length(time_vector);
 occ_index = 1;
 occ_times       = [7087, 14175, 21262, 28349, 35437, 42524, 49611, ...
                     56699, 63786, 70873, 77961, 85048, 92135];
+                
+occ_times_max_power = [3544, 7087, 10631, 14175, 17719, 21262, 24806, 28349, 31893, ...
+                        35437, 38981, 42524, 46068, 49611, ...
+                        53155, 56699, 60243, 63786, 67330, 70873, 74417, ...
+                        77961, 81505, 85048, 88592, 92135];
+                
+occlusion_powers = [65.63, 66.20, 66.77, 67.68, 69.04, 70.19, 71.34, 73.07, 74.22...
+    75.39, 75.97, 76.90, 77.72, 80.66, 83.62, 85.17, 85.64, 85.17, 83.62, 79.48...
+    75.97, 72.49, 70.19, 67.45, 66.20, 68];
 
 occ_multipliers_site1 = [1, 0.93, 0.8, 0.69, 0.57, 0.51, ...
                     0.45, 0.26, 0.21, 0.24, 0.47, 0.74, 0.98, 1];
@@ -40,14 +49,20 @@ battery_soc     = zeros(1,tv_length);
 battery_cap     = zeros(1,tv_length);
 %%
 distance_travelled = zeros(1,tv_length);
-efficiency_multipliers = zeros(1,tv_length);
+battery_efficiency_multipliers = zeros(1,tv_length);
 ones_offset = ones(1,tv_length);
 
-efficiency_multipliers(1:35000) = linspace(50,60,35000)./100 + 1;
-efficiency_multipliers(35001:45000) = linspace(60,55,10000)./100 + 1;
-efficiency_multipliers(45001:65000) = linspace(55,60,20000)./100 + 1;
-efficiency_multipliers(65001:92136) = linspace(60,55,27136)./100 + 1;
-efficiency_multipliers(92137:tv_length) = 1.3;
+battery_efficiency_multipliers(1:35000) = linspace(50,60,35000)./100 + 1;
+battery_efficiency_multipliers(35001:45000) = linspace(60,55,10000)./100 + 1;
+battery_efficiency_multipliers(45001:65000) = linspace(55,60,20000)./100 + 1;
+battery_efficiency_multipliers(65001:92136) = linspace(60,55,27136)./100 + 1;
+battery_efficiency_multipliers(92137:tv_length) = 1.3;
+
+panel_efficiency_multipliers(1:35000) = linspace(0,20,35000)./100 + 1;
+panel_efficiency_multipliers(35001:45000) = linspace(20,15,10000)./100 + 1;
+panel_efficiency_multipliers(45001:65000) = linspace(15,20,20000)./100 + 1;
+panel_efficiency_multipliers(65001:92136) = linspace(20,15,27136)./100 + 1;
+panel_efficiency_multipliers(92137:tv_length) = 1;
 
 
 azimuth_angle = zeros(1, tv_length); %in degrees

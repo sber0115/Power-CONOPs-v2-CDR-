@@ -23,8 +23,8 @@ line_pos_power.LabelVerticalAlignment = 'middle';
 line_occlusion_end.LabelVerticalAlignment = 'middle';
 hold on
 %title('Battery State-of-Charge vs Time')
-xlim([0, 25.6])
-%xlim([0, backAtLander_time/60^2])
+%xlim([0, 25.6])
+xlim([0, backAtLander_time/60^2])
 %xlim([25.59, backAtLander_time/60^2])
 %xticks(linspace(0,trek_duration, 10))
 xtickformat('%.1f')

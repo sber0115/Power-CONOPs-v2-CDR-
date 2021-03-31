@@ -96,12 +96,14 @@ for i = length(trek_phase1)+1:length(time_vector)
                        && crater_find_index <= length(craterAvoidances);
                    
     
-    if (spec_time < 21262)
+    if (spec_time < 4*3600)
         energy_change = (occlusion_power_generation - charge_max_mode*battery_efficiency_multipliers(i));
+        final_power_vector(i) = occlusion_power_generation;
         distance_covered = 0;
         
     elseif (spec_time < 92136)
         energy_change = (occlusion_power_generation - occlusion_power_consumption*battery_efficiency_multipliers(i));
+        final_power_vector(i) = occlusion_power_generation;
         distance_covered = 0;
         
     elseif (battery_soc(i-1) < start_charge_soc && ~is_charging)

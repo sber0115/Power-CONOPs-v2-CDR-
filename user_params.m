@@ -1,12 +1,14 @@
 
 
-init_soc = 0.8;             %initial state of charge
+init_soc = 0.8;            
 start_charge_soc = 0.85;
 end_charge_soc = .95;
 
 occlusion_power_consumption = 20;
 occlusion_power_generation = 68;
 roving_power_generation = 68;
+
+regolith_factor = 1;
 
 trek_duration     =  50; %[Hrs]
 

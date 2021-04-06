@@ -30,38 +30,13 @@ line_pos_power.LabelVerticalAlignment = 'middle';
 line_occlusion_end.LabelVerticalAlignment = 'middle';
 hold on
 %title('Battery State-of-Charge vs Time')
-xlim([0, 25.6])
-%xlim([0, backAtLander_time/60^2])
-%xlim([25.59, backAtLander_time/60^2])
+%xlim([0, 25.6])
+xlim([0, backAtLander_time/60^2])
+%xlim([25.6, backAtLander_time/60^2])
 %xticks(linspace(0,trek_duration, 10))
 xtickformat('%.1f')
 ylim([0,100]);
 xlabel('Time (hrs)')
 ylabel('State of Charge (100% Max)')
-
-%{
-startSOC_text = ['Charge once state-of-charge reaches ' num2str(start_charge_soc*100) '%'];
-text(27, 40, startSOC_text);
-
-occlusionText = [{'Nominal power' 'throughout' 'occlusion: ' [num2str(occlusion_power_consumption) 'W']} ];
-text(1.5, 30, occlusionText);
-%}
-
-%figure
-%plot([1:92136]/(60^2),final_power_vector)
-
-%{
-craterText = [{'Diameter of' 'biggest crater: ' [num2str(max(all_avoided_craters)) 'm']} ];
-text(backAtLander_time/60^2 - 5, 30, craterText);
-
-cratersAvoidedText = [{'Number of' 'craters avoided: ' [num2str(crater_find_index)]} ];
-text(backAtLander_time/60^2 - 2, 30, cratersAvoidedText);
-
-rockText = [{'Diameter of' 'biggest rock: ' [num2str(max(all_avoided_rocks)) 'm']} ];
-text(backAtLander_time/60^2 - 5, 15, rockText);
-
-rocksAvoidedText = [{'Number of' 'rocks avoided: ' [num2str(rock_find_index)]} ];
-text(backAtLander_time/60^2 - 2, 15, rocksAvoidedText);
-%}
 
 

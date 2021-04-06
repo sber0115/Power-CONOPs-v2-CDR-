@@ -4,11 +4,12 @@ init_soc = 0.8;
 start_charge_soc = 0.85;
 end_charge_soc = .95;
 
-occlusion_power_consumption = 20;
+occlusion_power_consumption = 21;
 occlusion_power_generation = 68;
 roving_power_generation = 68;
 
-regolith_factor = 1;
+input_regolith_factor = .25;
+regolith_factor_delta = .10;
 
 trek_duration     =  50; %[Hrs]
 

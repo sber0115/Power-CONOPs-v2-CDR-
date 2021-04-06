@@ -86,7 +86,7 @@ for i = length(trek_phase1)+1:length(time_vector)
     end
     
     power_multiplier = occ_multipliers_site1(occ_index);
-    occlusion_power_generation = occlusion_powers(occ_max_power_index)*power_multiplier;
+    occlusion_power_generation = occlusion_powers(occ_max_power_index)*power_multiplier*regolith_factors(i);
     %power_fraction is the factor by which max_solar_flux is multiplied (< 1)
  
     can_avoid_rock = ~is_charging && ~is_avoiding_rock && ~is_avoiding_crater ...
@@ -108,16 +108,16 @@ for i = length(trek_phase1)+1:length(time_vector)
         
     elseif (battery_soc(i-1) < start_charge_soc && ~is_charging)
         is_charging = true;
-        energy_change = (roving_power_generation*angle_offset(i) - charge_min_mode*battery_efficiency_multipliers(i));
+        energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i) - charge_min_mode*battery_efficiency_multipliers(i));
         distance_covered = 0;
     
     elseif (is_charging)
         if (battery_soc(i-1) >= end_charge_soc)
             is_charging = false;
-            energy_change = (roving_power_generation*angle_offset(i) - nominal_rove_mode*battery_efficiency_multipliers(i));
+            energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i) - nominal_rove_mode*battery_efficiency_multipliers(i));
             distance_covered = normal_distance;
         else
-            energy_change = (roving_power_generation*angle_offset(i) - charge_min_mode*battery_efficiency_multipliers(i));
+            energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i) - charge_min_mode*battery_efficiency_multipliers(i));
             distance_covered = 0;
         end
         
@@ -139,7 +139,7 @@ for i = length(trek_phase1)+1:length(time_vector)
         %expended over the duration of the entire manuever, so we must
         %divide by the manuever duration 
         avoidance_consumption = rock_turn_energy / rock_avoidance_duration;
-        power_generated = (roving_power_generation*angle_offset(i))*0.6;         
+        power_generated = (roving_power_generation*regolith_factors(i)*angle_offset(i))*0.6;         
         energy_change = power_generated + -1 *(avoidance_consumption + avionics_consumption);    
      
         rock_find_index = rock_find_index + 1;
@@ -150,7 +150,7 @@ for i = length(trek_phase1)+1:length(time_vector)
         if (time_avoiding_rock == rock_avoidance_duration-1)
             is_avoiding_rock = false;
             time_avoiding_rock = 0;
-            energy_change = roving_power_generation*angle_offset(i) - nominal_rove_mode;
+            energy_change = roving_power_generation*regolith_factors(i)*angle_offset(i) - nominal_rove_mode;
     
             distance_covered = normal_distance;
             
@@ -160,11 +160,12 @@ for i = length(trek_phase1)+1:length(time_vector)
             if (time_in_shadow >= max_shadow_time)
                 time_in_shadow = 0;
                 in_shadow = false;
-                power_generated = (roving_power_generation*angle_offset(i)); 
+                power_generated = (roving_power_generation*regolith_factors(i)*angle_offset(i)); 
             elseif (in_shadow)
                 time_in_shadow = time_in_shadow + 1;
                 power_generated = 0;
-                power_generated = (roving_power_generation*angle_offset(i))*0.6;  
+            else
+                power_generated = (roving_power_generation*regolith_factors(i)*angle_offset(i))*0.6;     
             end
              
             energy_change = power_generated + -1 *(avoidance_consumption + avionics_consumption); 
@@ -186,7 +187,7 @@ for i = length(trek_phase1)+1:length(time_vector)
         linear_distance_factor = straight_total_time / crater_avoidance_duration;
         avionics_consumption = extreme_rove_mode;
         avoidance_consumption = crater_turn_energy / crater_avoidance_duration; 
-        power_generated = (roving_power_generation*angle_offset(i))*0.6;    
+        power_generated = (roving_power_generation*regolith_factors(i)*angle_offset(i))*0.6;    
         energy_change = power_generated + -1 *(avoidance_consumption + avionics_consumption); 
   
         distance_covered = (normal_distance*linear_distance_factor);
@@ -197,7 +198,7 @@ for i = length(trek_phase1)+1:length(time_vector)
             is_avoiding_crater = false;
             time_avoiding_crater = 0;
             %finished avoiding crater so back to nominal rove
-            energy_changed = roving_power_generation*angle_offset(i) - nominal_rove_mode;
+            energy_changed = roving_power_generation*regolith_factors(i)*angle_offset(i) - nominal_rove_mode;
      
             distance_covered = normal_distance;
             
@@ -208,12 +209,12 @@ for i = length(trek_phase1)+1:length(time_vector)
             if (time_in_shadow >= max_shadow_time)
                 time_in_shadow = 0;
                 in_shadow = false;
-                power_generated = (roving_power_generation*angle_offset(i));
+                power_generated = (roving_power_generation*regolith_factors(i)*angle_offset(i));
             elseif (in_shadow)
                 time_in_shadow = time_in_shadow + 1;
                 power_generated = 0;
             else
-                power_generated = (roving_power_generation*angle_offset(i))*0.6;     
+                power_generated = (roving_power_generation*regolith_factors(i)*angle_offset(i))*0.6;     
             end
              
             energy_change = power_generated + -1 *(avoidance_consumption + avionics_consumption); 
@@ -223,7 +224,7 @@ for i = length(trek_phase1)+1:length(time_vector)
         end
     else
         
-        energy_change = (roving_power_generation*angle_offset(i) - nominal_rove_mode*battery_efficiency_multipliers(i));
+        energy_change = (roving_power_generation*regolith_factors(i)*angle_offset(i) - nominal_rove_mode*battery_efficiency_multipliers(i));
         if (shadow_found) %may encounter shadow
             in_shadow = true;
             energy_change = (-1 * nominal_rove_mode);

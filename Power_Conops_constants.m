@@ -20,13 +20,7 @@ occ_times_max_power = [3544, 10631, 17719 24806, 31893, ...
                         38981, 46068, ...
                         53155, 60243 67330 74417, ...
                         81505, 88592];
-
-%{
-occlusion_powers = [65.63, 66.20, 66.77, 67.68, 69.04, 70.19, 71.34, 73.07, 74.22...
-    75.39, 75.97, 76.90, 77.72, 80.66, 83.62, 85.17, 85.64, 85.17, 83.62, 79.48...
-    75.97, 72.49, 70.19, 67.45, 66.20, 68];
-%}
-                        
+                    
 occlusion_powers = [65.63, 66.77 69.04, 71.34, 74.22...
     75.97, 77.72, 83.62, 85.64, 83.62, ...
     75.97, 70.19 66.20, 68];
@@ -42,7 +36,7 @@ charge_downlink_mode = 39;
 charge_min_mode = 8;
 charge_max_mode = 25;
 
-%%
+%% Vectors for different missions phases and rover characteristics
 plan_trek_interval = [0: time_step: plan_duration*time_scale];
 downlink_interval  = [plan_duration: time_step: downlink_duration*time_scale];
 trek_phase1        = [plan_trek_interval, downlink_interval];                                                       
@@ -52,10 +46,8 @@ velocity_m = velocity_cm/100;
 normal_distance = velocity_m;
 battery_soc     = zeros(1,tv_length);
 battery_cap     = zeros(1,tv_length);
-
-final_power_vector = zeros(1,92136);
-%%
 distance_travelled = zeros(1,tv_length);
+%% Efficiency multipliers to capture panel temperature dependence
 battery_efficiency_multipliers = zeros(1,tv_length);
 
 battery_efficiency_multipliers(1:35000) = linspace(50,60,35000)./100 + 1;
@@ -69,7 +61,12 @@ panel_efficiency_multipliers(35001:45000) = linspace(20,15,10000)./100 + 1;
 panel_efficiency_multipliers(45001:65000) = linspace(15,20,20000)./100 + 1;
 panel_efficiency_multipliers(65001:92136) = linspace(20,15,27136)./100 + 1;
 panel_efficiency_multipliers(92137:tv_length) = 1;
+%% Vectors that capture the regolith power loss (specified by user parameter)
+regolith_factors = zeros(1,tv_length);
 
+regolith_factors(1:occlusion_end_time) = 1 - input_regolith_factor;
+regolith_factors(occlusion_end_time+1:tv_length) = linspace((1-input_regolith_factor), (1-input_regolith_factor+(regolith_factor_delta)), (tv_length-occlusion_end_time));
+%%
 
 azimuth_angle = zeros(1, tv_length); %in degrees
 

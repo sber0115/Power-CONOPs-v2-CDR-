@@ -5,7 +5,8 @@ time_scale = 60^2;
 time_start = 0;
 time_step  = 1; %single-second increments of time
 time_end   = trek_duration*time_scale; %[Hrs]*[36000 sec/Hr] = sec
-occlusion_end_time = 92136; % times in [s] at which the occlusion ends in the simulation
+%occlusion_end_time = 92136; % times in [s] at which the occlusion ends in the simulation
+occlusion_end_time = 0;
 tolerance  = 1e-2; %used to check if battery state of charge exceeds 100%
 
 time_vector = time_start: time_step: time_end;
@@ -31,7 +32,7 @@ nominal_rove_mode = 53;
 rove_downlink_mode = 58;
 charge_downlink_mode = 39;
 charge_min_mode = 8;
-charge_max_mode = 25;
+charge_max_mode = 32;
 
 %% Vectors for different missions phases (
 plan_trek_interval = [0: time_step: plan_duration*time_scale];
@@ -41,7 +42,7 @@ trek_phase1        = [plan_trek_interval, downlink_interval];
 %% Setting up the max capacity for "energy bucket" 
 %  Setting up the velocity parameter, and vectors used for plotting
 battery_total = 200*3600; %maximum battery energy capacity in W/hrs
-velocity_cm  = 4;
+velocity_cm  = 3;
 velocity_m = velocity_cm/100;
 normal_distance = velocity_m;
 
@@ -58,6 +59,9 @@ distance_travelled = zeros(1,tv_length);
 % capacity of 30% when the batteries are in the zero-degree Celcius range
 battery_efficiency_multipliers = zeros(1,tv_length);
 
+
+battery_efficiency_multipliers(1:tv_length) = 1.2;
+%{
 battery_efficiency_multipliers(1:13000) = linspace(14,30,13000)./100 + 1;
 battery_efficiency_multipliers(13001:18000) = linspace(30,20,5000)./100 + 1;
 battery_efficiency_multipliers(18001:21000) = linspace(20,30,3000)./100 + 1;
@@ -66,6 +70,7 @@ battery_efficiency_multipliers(35001:65000) = linspace(20,30,30000)./100 + 1;
 battery_efficiency_multipliers(65001:80000) = linspace(30,20,15000)./100 + 1;
 battery_efficiency_multipliers(80001:92000) = linspace(20,30,12000)./100 + 1;
 battery_efficiency_multipliers(92001:tv_length) = 1.2;
+%}
 
 %% Vectors that capture the regolith power loss 
 %  (specified by user parameter)
@@ -93,7 +98,7 @@ for i = occlusion_end_time:length(time_vector)
 end
 
 sun_vectors = zeros(length(azimuth_angle), 3);
-elevation_angle = 15; %fixed elevation angle of 15 degrees
+elevation_angle = 0; %fixed elevation angle of 15 degrees
 
 for i = 1: tv_length
     sun_vectors(i,:) = sph2cart(deg2rad(azimuth_angle(i)),deg2rad(elevation_angle),1);

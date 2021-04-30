@@ -10,8 +10,8 @@ occlusion_power_consumption = 21; %[W]
 roving_power_generation = 68; %[W]
         %during roving conditions, solar panel temperatures will lead to this basline power generation
 
-input_regolith_factor =.03; %specify a percentage effiency loss in power generation due to lunar dust coverage on the solar panel
-regolith_factor_delta = .05; %specify the increase in
+input_regolith_factor = .15; %specify a percentage effiency loss in power generation due to lunar dust coverage on the solar panel
+regolith_factor_delta = .0; %specify the increase in
 
 trek_duration     =  50; % specify in [Hrs] how long the simulation will be
 

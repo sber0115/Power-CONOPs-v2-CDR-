@@ -5,8 +5,14 @@ time_scale = 60^2;
 time_start = 0;
 time_step  = 1; %single-second increments of time
 time_end   = trek_duration*time_scale; %[Hrs]*[36000 sec/Hr] = sec
-%occlusion_end_time = 92136; % times in [s] at which the occlusion ends in the simulation
+
 occlusion_end_time = 0;
+
+if (enable_occlusion)
+    occlusion_end_time = 92136; % times in [s] at which the occlusion ends in the simulation
+    trek_duration = occlusion_end_time/60^2;
+end
+
 tolerance  = 1e-2; %used to check if battery state of charge exceeds 100%
 
 time_vector = time_start: time_step: time_end;
@@ -42,7 +48,7 @@ trek_phase1        = [plan_trek_interval, downlink_interval];
 %% Setting up the max capacity for "energy bucket" 
 %  Setting up the velocity parameter, and vectors used for plotting
 battery_total = 200*3600; %maximum battery energy capacity in W/hrs
-velocity_cm  = 3;
+velocity_cm  = input_velocity;
 velocity_m = velocity_cm/100;
 normal_distance = velocity_m;
 
@@ -59,24 +65,29 @@ distance_travelled = zeros(1,tv_length);
 % capacity of 30% when the batteries are in the zero-degree Celcius range
 battery_efficiency_multipliers = zeros(1,tv_length);
 
-
-battery_efficiency_multipliers(1:tv_length) = 1.2;
-%{
-battery_efficiency_multipliers(1:13000) = linspace(14,30,13000)./100 + 1;
-battery_efficiency_multipliers(13001:18000) = linspace(30,20,5000)./100 + 1;
-battery_efficiency_multipliers(18001:21000) = linspace(20,30,3000)./100 + 1;
-battery_efficiency_multipliers(21001:35000) = linspace(30,20,14000)./100 + 1;
-battery_efficiency_multipliers(35001:65000) = linspace(20,30,30000)./100 + 1;
-battery_efficiency_multipliers(65001:80000) = linspace(30,20,15000)./100 + 1;
-battery_efficiency_multipliers(80001:92000) = linspace(20,30,12000)./100 + 1;
-battery_efficiency_multipliers(92001:tv_length) = 1.2;
-%}
+%when occlusion is enabled, following vector setup follows the transient
+%temperture of batteries and decreases efficiency based on temperature
+if (enable_occlusion)
+    battery_efficiency_multipliers(1:13000) = linspace(14,30,13000)./100 + 1;
+    battery_efficiency_multipliers(13001:18000) = linspace(30,20,5000)./100 + 1;
+    battery_efficiency_multipliers(18001:21000) = linspace(20,30,3000)./100 + 1;
+    battery_efficiency_multipliers(21001:35000) = linspace(30,20,14000)./100 + 1;
+    battery_efficiency_multipliers(35001:65000) = linspace(20,30,30000)./100 + 1;
+    battery_efficiency_multipliers(65001:80000) = linspace(30,20,15000)./100 + 1;
+    battery_efficiency_multipliers(80001:92000) = linspace(20,30,12000)./100 + 1;
+    battery_efficiency_multipliers(92001:tv_length) = 1.2;
+else 
+    battery_efficiency_multipliers(1:tv_length) = 1.2;
+end
 
 %% Vectors that capture the regolith power loss 
 %  (specified by user parameter)
 regolith_factors = zeros(1,tv_length);
 
 regolith_factors(1:occlusion_end_time) = 1 - input_regolith_factor;
+
+%using linspace to evenly distribute the change in effiency over the
+%duration of the trek that's left
 regolith_factors(occlusion_end_time+1:tv_length) = ...
             linspace((1-input_regolith_factor), ...
                     (1-input_regolith_factor+(regolith_factor_delta)), ...

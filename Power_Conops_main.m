@@ -109,22 +109,22 @@ for i = length(trek_phase1)+1:length(time_vector)
     can_avoid_crater = ~is_charging && ~is_avoiding_crater && ~is_avoiding_rock ...
                        && crater_find_index <= length(craterAvoidances);
     
-                   %{
     %at the 4 hour mark, power generation falls below nominal power consumption during roving
-    if (spec_time < 4*3600) 
+    %note that this upper limit is dependent on the transient temperature
+    %of the batteries, so update as needed
+    if (enable_occlusion && spec_time < 4*3600) 
         energy_change = (occlusion_power_generation - nominal_rove_mode*battery_efficiency_multipliers(i));
         distance_covered = 0;
     
     % so after the initial four hours, change mode to
     % occlusion_power_consumption, and consider battery efficiency
-    elseif (spec_time < 92136)
+    elseif (enable_occlusion && spec_time < 92136)
         energy_change = (occlusion_power_generation - ...
                 occlusion_power_consumption*battery_efficiency_multipliers(i));
         distance_covered = 0;
-    %}
                        
     % if the following conditionals are reached, rover is in roving mode
-    if (battery_soc(i-1) < start_charge_soc && ~is_charging)
+    elseif (battery_soc(i-1) < start_charge_soc && ~is_charging)
         is_charging = true;
         energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i) ...
                         - charge_min_mode*battery_efficiency_multipliers(i));

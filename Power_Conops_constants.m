@@ -4,16 +4,16 @@
 time_scale = 60^2;
 time_start = 0;
 time_step  = 1; %single-second increments of time
-time_end   = trek_duration*time_scale; %[Hrs]*[36000 sec/Hr] = sec
+time_end   = trek_duration*time_scale; %[hrs]*[36000 sec/hr] = sec
 
 occlusion_end_time = 0;
 
 if (enable_occlusion)
-    occlusion_end_time = 92136; % times in [s] at which the occlusion ends in the simulation
+    occlusion_end_time = 92136; % times in [secs] at which the occlusion ends in the simulation
     trek_duration = occlusion_end_time/60^2;
 end
 
-tolerance  = 1e-2; %used to check if battery state of charge exceeds 100%
+tolerance  = 1e-2; %used to check if battery state of charge exceeds 100%, or reaches 0%
 
 time_vector = time_start: time_step: time_end;
 tv_length = length(time_vector);
@@ -23,15 +23,16 @@ tv_length = length(time_vector);
 %  refer to https://docs.google.com/spreadsheets/d/186Un4aNC-d2LEB51xynQXVAxh9xbEgpof89epkbNYiI/edit#gid=0 
 %  for more information on solar panel temperature dependence and other
 %  relevant calculations
+
 occ_times       = [0:24].*3600; %change power generation 
                     
                     %below are the effective power generations that take
                     %into account solar panel temperature dependence and
                     %the varying visible fraction of the solar disk
-                    
+
 occlusion_powers = [66, 64, 62, 59, 55, 52, 49, 46, 42, 41, 39, 37, 35, ...
                     29, 22, 20, 18, 19, 20, 28, 36, 44, 52, 58, 65, 68];
-
+                
 %% Power consumption at different operating modes (based on power equipment list)
 extreme_rove_mode = 58;
 nominal_rove_mode = 53; 
@@ -93,23 +94,33 @@ regolith_factors(occlusion_end_time+1:tv_length) = ...
                     (1-input_regolith_factor+(regolith_factor_delta)), ...
                     (tv_length-occlusion_end_time));
 
-%%
+%%  Vector math with sun vector, elevation, and azimuth angles
+%   Note that the hotcase has elevation fixed at 10 degrees, and azimuth at
+%   90 degrees. This case is covered with a conditional throughout.
+
 azimuth_angle = zeros(1, tv_length); %in degrees
 
-%populating azimuth_angle first since
-%the load_in is dependent on angle
-for i = occlusion_end_time:length(time_vector)
-     if (i > 1)
-        prev_value = azimuth_angle(i-1);
-        divide_factor = time_step*time_scale;
-        %for every .25 hours, or 1/4 hours, divide_factor was 4
-        diff = (360/(29.5*24)) / divide_factor; %previously, calculation was for .25 hours
-        azimuth_angle(i) = prev_value + diff;
-     end
+if (enable_hotcase) 
+    azimuth_angle(1:tv_length) = 90;
+else 
+    for i = occlusion_end_time:length(time_vector)
+        if (i > 1)
+            prev_value = azimuth_angle(i-1);
+            divide_factor = time_step*time_scale;
+            %for every .25 hours, or 1/4 hours, divide_factor was 4
+            diff = (360/(29.5*24)) / divide_factor; %previously, calculation was for .25 hours
+            azimuth_angle(i) = prev_value + diff;
+        end
+    end
 end
 
 sun_vectors = zeros(length(azimuth_angle), 3);
-elevation_angle = 0; %fixed elevation angle of 15 degrees
+
+elevation_angle = 0; 
+
+if (enable_hotcase)
+   elevation_angle = 10;
+end
 
 for i = 1: tv_length
     sun_vectors(i,:) = sph2cart(deg2rad(azimuth_angle(i)),deg2rad(elevation_angle),1);
@@ -121,6 +132,9 @@ angle_offset = zeros(1, tv_length);
 for i = 1: tv_length
     angle_offset(i) = dot(panel_normal_vector, sun_vectors(i,:));
 end
+
+%% This section is no longer relevant, need to update/handle this differently
+%  Currently has no effect on any outputs
 
 
 time_charging = 0; %[mins]

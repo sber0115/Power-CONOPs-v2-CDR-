@@ -57,8 +57,11 @@ time_avoiding_rock = 0; %[secs]
 time_avoiding_crater = 0; %[secs]
 time_in_shadow = 0; %[secs]
 distance_covered = 0; %[m]
-direction_change_time = 0;
-backAtLander_time = 0; %[s]
+direction_change_time = 0; %[secs]
+backAtLander_time = 0; %[hrs]
+
+battery_died = false;
+battery_death_time = 0; %[hrs]
 
 %%
 
@@ -113,7 +116,8 @@ for i = length(trek_phase1)+1:length(time_vector)
     %note that this upper limit is dependent on the transient temperature
     %of the batteries, so update as needed
     if (enable_occlusion && spec_time < 4*3600) 
-        energy_change = (occlusion_power_generation - nominal_rove_mode*battery_efficiency_multipliers(i));
+        energy_change = (occlusion_power_generation  ...    
+                        - nominal_rove_mode*battery_efficiency_multipliers(i));
         distance_covered = 0;
     
     % so after the initial four hours, change mode to
@@ -124,7 +128,7 @@ for i = length(trek_phase1)+1:length(time_vector)
         distance_covered = 0;
                        
     % if the following conditionals are reached, rover is in roving mode
-    elseif (battery_soc(i-1) < start_charge_soc && ~is_charging)
+    elseif (~enable_hotcase && battery_soc(i-1) < start_charge_soc && ~is_charging)
         is_charging = true;
         energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i) ...
                         - charge_min_mode*battery_efficiency_multipliers(i));
@@ -133,10 +137,12 @@ for i = length(trek_phase1)+1:length(time_vector)
     elseif (is_charging)
         if (battery_soc(i-1) >= end_charge_soc) %exit charging_mode
             is_charging = false;
-            energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i) - nominal_rove_mode*battery_efficiency_multipliers(i));
+            energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i)  ...
+                            - nominal_rove_mode*battery_efficiency_multipliers(i));
             distance_covered = normal_distance;
         else  %continue charging mode until state-of-charge reaches user specified end_charge_soc parameter
-            energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i) - charge_min_mode*battery_efficiency_multipliers(i));
+            energy_change = (roving_power_generation*angle_offset(i)*regolith_factors(i) ...
+                            - charge_min_mode*battery_efficiency_multipliers(i));
             distance_covered = 0;
         end
         
@@ -243,7 +249,8 @@ for i = length(trek_phase1)+1:length(time_vector)
         end
     else
         
-        energy_change = (roving_power_generation*regolith_factors(i)*angle_offset(i) - nominal_rove_mode*battery_efficiency_multipliers(i));
+        energy_change = (roving_power_generation*regolith_factors(i)*angle_offset(i) ...
+                        - nominal_rove_mode*battery_efficiency_multipliers(i));
         if (shadow_found) %may encounter shadow
             in_shadow = true;
             energy_change = (-1 * nominal_rove_mode);
@@ -270,17 +277,28 @@ for i = length(trek_phase1)+1:length(time_vector)
         battery_cap(i) = battery_cap(i-1);
     end
     
+    if (battery_cap(i-1) < tolerance)
+        battery_cap(i) = battery_cap(i-1); 
+        battery_died = true;
+        battery_death_time = spec_time/60^2;
+        break; %need a break here so that the battery_death time doesn't constantly overwrite itself
+    end
+    
     battery_soc(i) = battery_cap(i)/battery_total;
     
     if (changed_direction)
         if (distance_travelled(i-1) <= 0)
-           backAtLander_time = spec_time; 
-           break;
+           backAtLander_time = spec_time/60^2; 
+           break; %need a break here so that the backatlander_time doesn't constantly overwrite itself
         else
             distance_covered = -1*distance_covered;
         end
     else
         distance_covered = distance_covered;
+    end
+    
+    if (battery_died)
+        distance_covered = 0;
     end
     
     distance_travelled(i) = distance_travelled(i-1) + distance_covered;

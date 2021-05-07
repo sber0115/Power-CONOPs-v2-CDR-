@@ -30,9 +30,9 @@ if (~enable_occlusion)
     xtickformat('%.1f')
     ylabel('Distance from Lander (m)')
     totalTrekTime_text = [{'Speed-made-good: ' [num2str(speed_made_good) ' cm/s']} ];
-    text(backAtLander_time - 4, max_distance_from_lander - 20, totalTrekTime_text);
+    text(backAtLander_time - backAtLander_time/3, max_distance_from_lander - 20, totalTrekTime_text);
     totalTrekTime_text = [{'Total time for trek: ' [num2str(driving_time) ' hours']} ];
-    text(backAtLander_time - 4, max_distance_from_lander - 80, totalTrekTime_text);
+    text(backAtLander_time - backAtLander_time/3, max_distance_from_lander - 80, totalTrekTime_text);
 
 end
 
@@ -40,10 +40,16 @@ end
 
 figure
 
+
 plot(time_vector/time_scale,battery_soc*100)
 title('Battery State-of-Charge vs Time')
 
 hold on
+
+if (enable_occlusion) 
+    line_transitionToHibernation = xline(9, '--r', {'Transition to 21W power consumption'});
+    line_transitionToHibernation.LabelVerticalAlignment = 'middle';
+end
 
 xlim([0, x_limit])
 xtickformat('%.1f')

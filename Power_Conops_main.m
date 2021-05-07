@@ -101,7 +101,15 @@ for i = length(trek_phase1)+1:length(time_vector)
        changed_direction = true; 
        direction_change_time = spec_time;
     end
-       
+    
+    if (enable_dust_five)
+        occlusion_powers = occlusion_powers_five;
+    elseif (enable_dust_ten)
+        occlusion_powers = occlusion_powers_ten;
+    elseif (enable_dust_fifteen)
+        occlusion_powers = occlusion_powers_fifteen;
+    end
+    
     %this is accessible by the rest of the cases in the code
     %regolith_factors(i) encompasses loss in efficiency due to lunar dust
     occlusion_power_generation = occlusion_powers(occ_index)*regolith_factors(i);

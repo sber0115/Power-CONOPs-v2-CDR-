@@ -30,8 +30,10 @@ occ_times       = [0:24].*3600; %change power generation
                     %into account solar panel temperature dependence and
                     %the varying visible fraction of the solar disk
 
-occlusion_powers = [66, 64, 62, 59, 55, 52, 49, 46, 42, 41, 39, 37, 35, ...
-                    29, 22, 20, 18, 19, 20, 28, 36, 44, 52, 58, 65, 68];
+occlusion_powers_baseline = [65,64,62,59,56,52,50,47,43,41,39,37,37,30, ...
+                            22,21,18,19,19,27,34,42,50,57,65];
+
+occlusion_powers = occlusion_powers_baseline;
                 
 %% Power consumption at different operating modes (based on power equipment list)
 extreme_rove_mode = 58;
@@ -69,16 +71,13 @@ battery_efficiency_multipliers = zeros(1,tv_length);
 %when occlusion is enabled, following vector setup follows the transient
 %temperture of batteries and decreases efficiency based on temperature
 if (enable_occlusion)
-    battery_efficiency_multipliers(1:13000) = linspace(14,30,13000)./100 + 1;
-    battery_efficiency_multipliers(13001:18000) = linspace(30,20,5000)./100 + 1;
-    battery_efficiency_multipliers(18001:21000) = linspace(20,30,3000)./100 + 1;
-    battery_efficiency_multipliers(21001:35000) = linspace(30,20,14000)./100 + 1;
-    battery_efficiency_multipliers(35001:65000) = linspace(20,30,30000)./100 + 1;
-    battery_efficiency_multipliers(65001:80000) = linspace(30,20,15000)./100 + 1;
-    battery_efficiency_multipliers(80001:92000) = linspace(20,30,12000)./100 + 1;
-    battery_efficiency_multipliers(92001:tv_length) = 1.2;
+    battery_efficiency_multipliers(1:28800) = linspace(14,25,28800)./100 + 1;
+    battery_efficiency_multipliers(28801:34560) = linspace(25,15,5760)./100 + 1;
+    battery_efficiency_multipliers(34561:37800) = linspace(15,25,3240)./100 + 1;
+    battery_efficiency_multipliers(37801:79200) = 1.2;
+    battery_efficiency_multipliers(79201:tv_length) = 1.1;
 else 
-    battery_efficiency_multipliers(1:tv_length) = 1.2;
+    battery_efficiency_multipliers(1:tv_length) = 1.1;
 end
 
 %% Vectors that capture the regolith power loss 
@@ -99,6 +98,7 @@ regolith_factors(occlusion_end_time+1:tv_length) = ...
 %   90 degrees. This case is covered with a conditional throughout.
 
 azimuth_angle = zeros(1, tv_length); %in degrees
+azimuth_angle(1:tv_length) = 0;
 
 if (enable_hotcase) 
     azimuth_angle(1:tv_length) = 90;
@@ -126,7 +126,7 @@ for i = 1: tv_length
     sun_vectors(i,:) = sph2cart(deg2rad(azimuth_angle(i)),deg2rad(elevation_angle),1);
 end
 
-panel_normal_vector = [1,0,0];
+panel_normal_vector = [0.5, 0.5, 0];
 angle_offset = zeros(1, tv_length);
 
 for i = 1: tv_length
